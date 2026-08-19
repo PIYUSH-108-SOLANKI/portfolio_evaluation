@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 export interface TechIcon {
   name: string;
@@ -143,8 +144,9 @@ interface TechIconGridProps {
 }
 
 export default function TechIconGrid({ icons = techIcons }: TechIconGridProps) {
+  const [flipped, setFlipped] = useState<string | null>(null);
   return (
-    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-4">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
       {icons.map((icon, i) => (
         <motion.div
           key={icon.name}
@@ -152,17 +154,28 @@ export default function TechIconGrid({ icons = techIcons }: TechIconGridProps) {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.3, delay: i * 0.04 }}
-          className="tech-icon-wrapper flex-col gap-1.5"
-          style={{ '--icon-color': icon.color } as React.CSSProperties}
+          className="stack-card"
+          onClick={() => setFlipped(flipped === icon.name ? null : icon.name)}
+          style={{ '--icon-color': icon.color, transform: flipped === icon.name ? 'rotateY(180deg)' : 'rotateY(0deg)' } as React.CSSProperties}
         >
-          <div style={{ color: icon.color }}>
-            {icon.svg}
+          <div className="stack-card-face">
+            <div className="stack-icon" style={{ color: icon.color }}>{icon.svg}</div>
+            <span>{icon.name}</span>
+            <small>Tap to flip</small>
           </div>
-          <span className="text-[10px] font-medium" style={{ color: 'var(--color-text-secondary)' }}>
-            {icon.name}
-          </span>
+          <div className="stack-card-face stack-card-back">
+            <strong>{icon.name}</strong>
+            <span>{techDescription(icon.name)}</span>
+          </div>
         </motion.div>
       ))}
     </div>
   );
+}
+
+function techDescription(name: string) {
+  const details: Record<string, string> = {
+    Python: 'Backend, automation and AI/ML exploration.', Java: 'Object-oriented programming foundations.', 'C++': 'Data structures and problem solving.', JavaScript: 'Modern interfaces and full-stack web apps.', HTML: 'Semantic, accessible web structure.', CSS: 'Responsive layouts and polished UI.', PHP: 'Web fundamentals and server-side concepts.', React: 'Fast, component-based application interfaces.', 'Node.js': 'APIs and backend services.', Docker: 'Consistent development and deployment environments.', Git: 'Version control and collaborative workflows.', AWS: 'Cloud infrastructure and scalable deployment.', MongoDB: 'Flexible document data modelling.', PostgreSQL: 'Relational data and reliable backend systems.',
+  };
+  return details[name] ?? 'Part of my growing technical toolkit.';
 }

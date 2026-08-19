@@ -1,281 +1,36 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import { useInView } from './useInView';
-import { featuredProjects, otherProjects } from '../data/projects';
-import { ExternalLink, Github, ChevronRight, Layers } from 'lucide-react';
-
-function ArchitectureDiagram() {
-  const nodes = [
-    { id: 'user', label: 'User', x: 50, y: 10 },
-    { id: 'api', label: 'API Gateway', x: 50, y: 25 },
-    { id: 'auth', label: 'Auth / JWT', x: 25, y: 40 },
-    { id: 'app', label: 'App Server', x: 50, y: 40 },
-    { id: 'redis', label: 'Redis Cache', x: 75, y: 40 },
-    { id: 'pg', label: 'PostgreSQL', x: 35, y: 58 },
-    { id: 'rmq', label: 'RabbitMQ', x: 65, y: 58 },
-    { id: 's3', label: 'AWS S3', x: 30, y: 74 },
-    { id: 'hls', label: 'HLS Encoding', x: 55, y: 74 },
-    { id: 'cdn', label: 'CloudFront', x: 75, y: 74 },
-  ];
-
-  const connections = [
-    ['user', 'api'],
-    ['api', 'auth'],
-    ['api', 'app'],
-    ['app', 'pg'],
-    ['app', 'redis'],
-    ['app', 'rmq'],
-    ['rmq', 's3'],
-    ['rmq', 'hls'],
-    ['hls', 'cdn'],
-  ];
-
-  return (
-    <div className="glass-card rounded-xl p-6 mt-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Layers size={16} style={{ color: 'var(--color-accent-light)' }} />
-        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-accent-light)' }}>
-          System Architecture
-        </span>
-      </div>
-      <div className="relative w-full" style={{ paddingBottom: '85%' }}>
-        <svg
-          viewBox="0 0 100 85"
-          className="absolute inset-0 w-full h-full"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {connections.map(([from, to], i) => {
-            const fromNode = nodes.find((n) => n.id === from)!;
-            const toNode = nodes.find((n) => n.id === to)!;
-            return (
-              <line
-                key={i}
-                x1={fromNode.x}
-                y1={fromNode.y + 3}
-                x2={toNode.x}
-                y2={toNode.y - 1}
-                stroke="var(--color-accent)"
-                strokeOpacity="0.25"
-                strokeWidth="0.3"
-                strokeDasharray="1,1"
-              />
-            );
-          })}
-          {nodes.map((node) => (
-            <g key={node.id}>
-              <rect
-                x={node.x - 10}
-                y={node.y - 2.5}
-                width="20"
-                height="5"
-                rx="1"
-                fill="var(--color-card)"
-                stroke="var(--color-accent)"
-                strokeOpacity="0.3"
-                strokeWidth="0.3"
-              />
-              <text
-                x={node.x}
-                y={node.y + 0.5}
-                textAnchor="middle"
-                fill="var(--color-accent-light)"
-                fontSize="2.2"
-                fontFamily="Inter, sans-serif"
-                fontWeight="500"
-              >
-                {node.label}
-              </text>
-            </g>
-          ))}
-        </svg>
-      </div>
-    </div>
-  );
-}
-
-function FeaturedProjectCard({ project, index }: { project: typeof featuredProjects[0]; index: number }) {
-  const [expanded, setExpanded] = useState(false);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="glass-card-hover rounded-2xl overflow-hidden"
-    >
-      <div className="p-6 md:p-8">
-        <div className="flex items-start justify-between mb-3">
-          <div>
-            {project.isHackathon && (
-              <span className="inline-block text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full mb-3" style={{ color: '#b8860b', backgroundColor: 'rgba(184, 134, 11, 0.1)', border: '1px solid rgba(184, 134, 11, 0.2)' }}>
-                Hackathon Project
-              </span>
-            )}
-            <h3 className="font-display font-bold text-xl" style={{ color: 'var(--color-text-primary)' }}>
-              {project.title}
-            </h3>
-            {project.subtitle && (
-              <p className="text-sm font-medium mt-0.5" style={{ color: 'var(--color-accent-light)' }}>
-                {project.subtitle}
-              </p>
-            )}
-          </div>
-          <span className="text-sm font-mono" style={{ color: 'var(--color-text-muted)' }}>
-            {String(index + 1).padStart(2, '0')}
-          </span>
-        </div>
-
-        <p className="text-sm leading-relaxed mb-5" style={{ color: 'var(--color-text-secondary)' }}>
-          {project.description}
-        </p>
-
-        <div className="flex flex-wrap gap-2 mb-5">
-          {project.technologies.map((tech) => (
-            <span key={tech} className="tag text-[11px]">
-              {tech}
-            </span>
-          ))}
-        </div>
-
-        {project.features && (
-          <>
-            <button
-              onClick={() => setExpanded(!expanded)}
-              className="flex items-center gap-1 text-xs transition-colors mb-3"
-              style={{ color: 'var(--color-text-muted)' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-text-primary)')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-muted)')}
-            >
-              <ChevronRight
-                size={14}
-                className={`transition-transform duration-200 ${expanded ? 'rotate-90' : ''}`}
-              />
-              {expanded ? 'Hide' : 'Show'} key details
-            </button>
-            <AnimatePresence>
-              {expanded && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="overflow-hidden"
-                >
-                  <div className="space-y-2 pb-4">
-                    {project.problem && (
-                      <div className="text-sm">
-                        <span className="font-medium" style={{ color: 'var(--color-text-muted)' }}>Problem: </span>
-                        <span style={{ color: 'var(--color-text-secondary)' }}>{project.problem}</span>
-                      </div>
-                    )}
-                    {project.solution && (
-                      <div className="text-sm">
-                        <span className="font-medium" style={{ color: 'var(--color-text-muted)' }}>Solution: </span>
-                        <span style={{ color: 'var(--color-text-secondary)' }}>{project.solution}</span>
-                      </div>
-                    )}
-                    <ul className="grid grid-cols-2 gap-1.5 pt-2">
-                      {project.features.map((f) => (
-                        <li key={f} className="flex items-center gap-2 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
-                          <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ backgroundColor: 'var(--color-accent-light)', opacity: 0.5 }} />
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </>
-        )}
-
-        {project.id === 1 && <ArchitectureDiagram />}
-
-        <div className="flex gap-3 pt-2">
-          {project.githubUrl && project.githubUrl !== '[ADD GITHUB LINK]' && (
-            <a
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-secondary text-xs !px-4 !py-2"
-            >
-              <Github size={14} /> Code
-            </a>
-          )}
-          {project.liveUrl && (
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-secondary text-xs !px-4 !py-2"
-            >
-              <ExternalLink size={14} /> Live Demo
-            </a>
-          )}
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
+import { motion } from 'framer-motion';
+import { ExternalLink, Plus } from 'lucide-react';
 import { useState } from 'react';
 
+const projects = [
+  { title: 'Dhokha — Fraud Intelligence Platform', category: 'Fraud Prevention', text: 'A Demo Day finalist helping users identify and protect themselves from digital and financial fraud.', colors: 'from-[#1e293b] via-[#285168] to-[#86c0bb]', live: 'https://dhokha-vert.vercel.app/' },
+  { title: 'Samruddhi — EHR & Distributed Consent', category: 'Backend Architecture', text: 'Privacy-first EHR backend with PostgreSQL, MongoDB, Supabase JWT, Redis consent tokens and QR sharing.', colors: 'from-[#1d1728] via-[#4f3463] to-[#f28b71]' },
+  { title: 'Advox — AI-Powered Analysis', category: 'AI / ML', text: 'An AI-powered analysis solution built under the Superlevemind Hackathon constraints.', colors: 'from-[#f3e9e0] via-[#d5b7aa] to-[#6b3f35]' },
+  { title: 'Medical Analyzer', category: 'AI / Healthcare', text: 'AI-based medical diagnostics and analysis system developed for Hachx NMIMS.', colors: 'from-[#222b32] via-[#567e94] to-[#e6f3ee]' },
+  { title: 'Skillify — Learning & Assessment', category: 'Product Development', text: 'A learning and skill-assessment product that earned 2nd place at the Skillify Hackathon.', colors: 'from-[#090b0e] via-[#28394a] to-[#82a5b2]' },
+  { title: 'Smart India Hackathon — Tourism App', category: 'Product Development', text: 'A tourism-focused solution addressing practical travel-sector challenges in India.', colors: 'from-[#282828] via-[#777] to-[#dedede]' },
+  { title: 'Schbang — Research & Trigger Finder', category: 'Automation', text: 'Automated research and useful-trigger discovery for business and marketing workflows.', colors: 'from-[#2b1733] via-[#8d3f9f] to-[#f0a9df]' },
+  { title: 'IrrigaFlow — Smart Irrigation', category: 'Cloud + IoT', text: 'Full-stack cloud platform for intelligent irrigation with React, Node, MySQL, Docker and AWS.', colors: 'from-[#0f3d2e] via-[#4d9565] to-[#b5db7a]' },
+  { title: 'Cloud-Deployed Web Application', category: 'Cloud Deployment', text: 'Full-stack application deployed with AWS EC2, Apache, Node.js and Amazon RDS.', colors: 'from-[#0d263a] via-[#287baf] to-[#75cbf2]' },
+];
+
 export default function Projects() {
-  const [ref, inView] = useInView(0.05);
-
-  return (
-    <section id="projects" className="py-24 md:py-32">
-      <div className="section-container" ref={ref}>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="mb-16"
-        >
-          <h2 className="section-heading">Featured Projects</h2>
-          <p className="section-subheading mt-4">
-            A selection of projects that demonstrate my interests and technical
-            growth.
-          </p>
-          <div className="w-12 h-0.5 mt-4" style={{ backgroundColor: 'var(--color-accent)' }} />
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 gap-6 mb-16">
-          {featuredProjects.map((project, i) => (
-            <FeaturedProjectCard key={project.id} project={project} index={i} />
-          ))}
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h3 className="font-display font-bold text-lg mb-6" style={{ color: 'var(--color-text-primary)' }}>
-            More Experiments
-          </h3>
-          <div className="grid sm:grid-cols-3 gap-4">
-            {otherProjects.map((p) => (
-              <div
-                key={p.name}
-                className="glass-card-hover rounded-xl p-5 flex flex-col gap-3"
-              >
-                <h4 className="font-display font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>
-                  {p.name}
-                </h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {p.technologies.map((t) => (
-                    <span key={t} className="tag-outline text-[10px]">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
+  const [showAll, setShowAll] = useState(false);
+  const visible = showAll ? projects : projects.slice(0, 6);
+  return <section id="projects" className="py-24 md:py-32">
+    <div className="section-container max-w-6xl">
+      <h2 className="mb-14 text-center font-display text-4xl font-semibold md:text-5xl" style={{ color: 'var(--color-text-primary)' }}>Featured Projects</h2>
+      <div className="grid gap-8 md:grid-cols-2">
+        {visible.map((project, index) => <motion.article key={project.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: (index % 2) * .08 }} className="group">
+          <div className={`relative aspect-[1.55] overflow-hidden rounded-[1.6rem] border-[11px] border-[#f4f5ff] bg-gradient-to-br ${project.colors} shadow-sm`}>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_20%,rgba(255,255,255,.5),transparent_24%),linear-gradient(135deg,transparent_45%,rgba(255,255,255,.18)_46%,transparent_47%)]" />
+            <div className="absolute bottom-5 left-5 right-5 rounded-xl border border-white/20 bg-black/25 p-3 backdrop-blur-sm"><span className="text-xs font-medium text-white/90">{project.category}</span></div>
           </div>
-        </motion.div>
+          <p className="mt-4 text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>{project.category}</p>
+          <div className="mt-1 flex items-start justify-between gap-3"><div><h3 className="font-display text-xl font-semibold leading-tight" style={{ color: 'var(--color-text-primary)' }}>{project.title}</h3><p className="mt-2 text-sm leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>{project.text}</p></div>{project.live && <a href={project.live} target="_blank" rel="noreferrer" aria-label={`Open ${project.title}`} className="mt-1 rounded-full border p-2"><ExternalLink size={15} /></a>}</div>
+        </motion.article>)}
       </div>
-    </section>
-  );
+      <div className="mt-12 text-center"><button onClick={() => setShowAll(!showAll)} className="btn-secondary">{showAll ? 'Show Less' : 'View More'} <Plus size={16} className={showAll ? 'rotate-45' : ''} /></button></div>
+    </div>
+  </section>;
 }

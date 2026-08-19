@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Sun, Moon } from 'lucide-react';
-import { useTheme } from '../ThemeContext';
+import { Menu, X } from 'lucide-react';
 
 const navLinks = [
   { label: 'Home', href: '#home' },
   { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
+  { label: 'Stack', href: '#skills' },
+  { label: 'Services', href: '#exploring' },
   { label: 'Projects', href: '#projects' },
   { label: 'Contact', href: '#contact' },
 ];
@@ -14,7 +14,6 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -47,18 +46,15 @@ export default function Navbar() {
           borderColor: scrolled ? 'var(--glass-border)' : 'transparent',
         }}
       >
-        <div className="section-container flex items-center justify-between h-16 md:h-18">
-          <a href="#home" className="font-display font-bold text-lg tracking-tight" style={{ color: 'var(--color-text-primary)' }}>
-            Piyush Solanki
-          </a>
+        <div className="mx-auto flex h-16 max-w-4xl items-center justify-center px-5">
 
           {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-1 rounded-full border px-2 py-1 shadow-sm" style={{ background: 'rgba(255,255,255,.82)', borderColor: 'rgba(13,13,13,.06)' }}>
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm transition-colors duration-200"
+                className="rounded-full px-3 py-2 text-[10px] transition-colors duration-200"
                 style={{ color: 'var(--color-text-muted)' }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-text-primary)')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-muted)')}
@@ -66,31 +62,13 @@ export default function Navbar() {
                 {link.label}
               </a>
             ))}
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg transition-all duration-200"
-              style={{ color: 'var(--color-text-muted)', background: 'var(--color-accent-dim)' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-text-primary)')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-muted)')}
-              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-            >
-              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-            </button>
-            <a href="#contact" className="btn-primary text-xs !px-4 !py-2">
-              Let's Connect
+            <a href="#contact" className="btn-primary text-[10px] !px-4 !py-2">
+              Contact
             </a>
           </div>
 
           {/* Mobile hamburger */}
           <div className="flex items-center gap-2 md:hidden">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg transition-all duration-200"
-              style={{ color: 'var(--color-text-muted)', background: 'var(--color-accent-dim)' }}
-              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-            >
-              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-            </button>
             <button
               className="p-2 transition-colors"
               style={{ color: 'var(--color-text-muted)' }}
@@ -129,13 +107,7 @@ export default function Navbar() {
                   {link.label}
                 </motion.a>
               ))}
-              <a
-                href="#contact"
-                onClick={() => setMobileOpen(false)}
-                className="btn-primary mt-4"
-              >
-                Let's Connect
-              </a>
+              <a href="#contact" onClick={() => setMobileOpen(false)} className="btn-primary mt-4">Let's Connect</a>
             </div>
           </motion.div>
         )}
