@@ -61,9 +61,6 @@ export default function Navbar() {
                 {link.label}
               </a>
             ))}
-            <a href="#contact" className="btn-primary text-[10px] !px-4 !py-2">
-              Contact
-            </a>
           </div>
 
           {/* Mobile hamburger */}
