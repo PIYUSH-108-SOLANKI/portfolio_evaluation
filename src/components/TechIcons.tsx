@@ -144,33 +144,31 @@ interface TechIconGridProps {
 }
 
 export default function TechIconGrid({ icons = techIcons }: TechIconGridProps) {
+  const [flippedIcon, setFlippedIcon] = useState<string | null>(null);
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-      {icons.map((icon, i) => {
-        const [flipped, setFlipped] = useState<string | null>(null);
-        return (
-          <motion.div
-            key={icon.name}
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3, delay: i * 0.04 }}
-            className="stack-card"
-            onClick={() => setFlipped(!flipped)}
-            style={{ '--icon-color': icon.color, transform: flipped === icon.name ? 'rotateY(180deg)' : 'rotateY(0deg)' } as React.CSSProperties}
-          >
-            <div className="stack-card-face">
-              <div className="stack-icon" style={{ color: icon.color }}>{icon.svg}</div>
-              <span>{icon.name}</span>
-              <small>Tap to flip</small>
-            </div>
-            <div className="stack-card-face stack-card-back">
-              <strong>{icon.name}</strong>
-              <span>{techDescription(icon.name)}</span>
-            </div>
-          </motion.div>
-        );
-      })}
+      {icons.map((icon, i) => (
+        <motion.div
+          key={icon.name}
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.3, delay: i * 0.04 }}
+          className="stack-card"
+          onClick={() => setFlippedIcon(icon.name === flippedIcon ? null : icon.name)}
+          style={{ '--icon-color': icon.color, transform: flippedIcon === icon.name ? 'rotateY(180deg)' : 'rotateY(0deg)' } as React.CSSProperties}
+        >
+          <div className="stack-card-face">
+            <div className="stack-icon" style={{ color: icon.color }}>{icon.svg}</div>
+            <span>{icon.name}</span>
+            <small>Tap to flip</small>
+          </div>
+          <div className="stack-card-face stack-card-back">
+            <strong>{icon.name}</strong>
+            <span>{techDescription(icon.name)}</span>
+          </div>
+        </motion.div>
+      ))}
     </div>
   );
 }
