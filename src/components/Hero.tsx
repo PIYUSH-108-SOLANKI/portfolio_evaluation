@@ -18,7 +18,7 @@ export default function Hero() {
         <motion.div initial={{ opacity: 0, scale: .94 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: .25 }} className="mt-3 h-44 w-36 overflow-hidden rounded-[2rem] shadow-xl md:h-52 md:w-44">
           <img src={portrait} alt="Piyush Solanki" className="h-full w-full object-cover object-[50%_32%]" />
         </motion.div>
-        <p className="mt-3 text-[10px]" style={{ color: 'var(--color-text-secondary)' }}>Projects, hackathons & deployments</p>
+        <p className="mt-3 text-[10px]" style={{ color: 'var(--color-text-secondary)' }}>open to opportunities for interns and the software engineering to btech cde 3rd student</p>
         <a href="#contact" className="btn-secondary mt-5 border-2 !px-8 !py-3" style={{ borderColor: 'rgba(101,83,255,.13)' }}>Let’s Connect</a>
       </div>
     </section>
