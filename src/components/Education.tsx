@@ -50,7 +50,7 @@ export default function Education() {
                   Undergraduate Student — Computer Science
                 </p>
                 <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-                  Kharghar, Maharashtra · 5th Semester
+                  Kharghar, Maharashtra · 5th Semester · 3rd Year
                 </p>
               </div>
               <div className="flex flex-wrap gap-2 pt-1">
